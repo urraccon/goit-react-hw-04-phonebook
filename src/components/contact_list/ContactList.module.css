@@ -1,0 +1,18 @@
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.contact {
+  margin-left: 3rem;
+}
+
+.name {
+  font-size: 1.1rem;
+}
+
+.container {
+  display: flex;
+  gap: 1rem;
+}

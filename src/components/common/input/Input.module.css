@@ -1,0 +1,29 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.name {
+  font-size: 1.1rem;
+  /* text-transform: capitalize; */
+}
+
+.input {
+  /* all: unset; */
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  font-size: 0.9rem;
+  /* font-weight: 500; */
+  padding: 0.2rem 0.2rem 0;
+  width: 10rem;
+}
+
+.input:focus {
+  /* all: unset; */
+  outline: none;
+  /* border: 2px solid rgba(3, 102, 214, 0.4); */
+  box-shadow: rgba(3, 102, 214, 0.4) 0px 0px 0px 2px,
+    rgba(3, 102, 214, 0.65) 0px 4px 6px -1px,
+    rgba(3, 102, 214, 0.08) 0px 1px 0px inset;
+  /* padding: 0.25rem 0.2rem 0; */
+}
