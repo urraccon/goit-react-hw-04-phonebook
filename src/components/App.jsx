@@ -1,52 +1,41 @@
-import { Component } from 'react';
 import styles from './App.module.css';
 import { nanoid } from 'nanoid';
-import { ContactForm } from './contact_form/ContactForm';
+import ContactForm from './contact_form/ContactForm';
 import { Filter } from './filter/Filter';
 import { ContactList } from './contact_list/ContactList';
 import { Section } from './common/section/Section';
+import { useEffect, useState } from 'react';
 
 const CONTACTS_KEY = 'contacts';
 
-export class App extends Component {
-  state = {
-    // contacts: [],
-    contacts: [],
-    // contactsCopy: [],
-    contactsCopy: [],
-    filter: '',
-  };
+const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [contactsCopy, setContactsCopy] = useState([]);
+  const [filter, setFilter] = useState('');
 
-  async componentDidMount() {
-    const data = localStorage.getItem(CONTACTS_KEY);
-    // console.log(JSON.parse(data));
-    try {
+  useEffect(() => {
+    async function getContacts() {
+      const data = localStorage.getItem(CONTACTS_KEY);
+
       if (data) {
-        this.setState({
-          contacts: JSON.parse(data),
-          contactsCopy: JSON.parse(data),
-        });
+        setContacts(JSON.parse(data));
+        setContactsCopy(JSON.parse(data));
       }
-    } catch (err) {
+    }
+    getContacts().catch(err => {
       console.log(`error: ${err}`);
-    }
-  }
+    });
+  }, []);
 
-  componentDidUpdate(_prevProps, prevState) {
-    // console.log('updating component');
-    if (prevState?.contacts.length !== this.state.contacts.length) {
-      localStorage.setItem(CONTACTS_KEY, JSON.stringify(this.state.contacts));
-    }
-  }
+  useEffect(() => {
+    localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+  }, [contacts]);
 
-  addContact = form => {
+  const addContact = form => {
     // debugger;
-    console.log(form);
+    // console.log(form);
     const { name, number } = form;
-    // const { value, name } = evt.target.form[0];
-    // console.log(value);
-    const { contacts } = this.state;
-    // let isAlreadyAdded = false;
+
     if (contacts.length > 0) {
       const contactsName = contacts.map(contact => contact.name);
       // console.log(contactsName);
@@ -57,76 +46,59 @@ export class App extends Component {
         return;
       }
     }
-    // contacts.forEach(contact => {
-    //   if (contact.name.toLowerCase() === name.toLowerCase()) {
-    //     window.alert(`${contact.name} is already in contacts.`);
-    //     checkName = true;
-    //   }
-    // });
-    // if (isAlreadyAdded !== undefined)
+
     if (name !== '' && number !== '') {
       const newId = nanoid();
       const contact = {
         id: newId,
-        name: name,
-        number: number,
+        name,
+        number,
       };
-      this.setState(prev => {
-        return {
-          contacts: [...prev.contacts, contact],
-          contactsCopy: [...prev.contacts, contact],
-        };
-      });
+      setContacts(prev => [...prev, contact]);
+      setContactsCopy(prev => [...prev, contact]);
       // console.log(this.state.name);
     }
   };
 
-  setFilter = evt => {
+  const filterContacts = evt => {
     // debugger;
     const { value } = evt.target;
-    this.setState(prev => {
-      return {
-        contacts: prev.contactsCopy.filter(contact =>
-          contact.name.toLowerCase().includes(value.toLowerCase())
-        ),
-        filter: value,
-      };
-    });
-  };
-
-  deleteContact = evt => {
-    console.log(evt);
-    const { id } = evt.target.parentNode.parentNode;
-    console.log(id);
-    // const {contacts} = this.state;
-    this.setState(prev => {
-      return {
-        contacts: prev.contacts.filter(contact => contact.id !== id),
-        contactsCopy: prev.contactsCopy.filter(contact => contact.id !== id),
-      };
-    });
-  };
-
-  render() {
-    const { contacts, filter } = this.state;
-    // console.log(contacts, filter);
-    return (
-      <div className={styles.container}>
-        <div className={styles.contactBook}>
-          <Section title="Phonebook">
-            <ContactForm onSubmit={this.addContact} />
-          </Section>
-          <Section title="Contacts">
-            <div className={styles.contacts}>
-              <Filter filter={filter} onChange={this.setFilter} />
-              <ContactList contacts={contacts} onClick={this.deleteContact} />
-            </div>
-          </Section>
-        </div>
-      </div>
+    setContacts(
+      contactsCopy.filter(contact =>
+        contact.name.toLowerCase().includes(value.toLowerCase())
+      )
     );
-  }
-}
+    setFilter(value);
+  };
+
+  const deleteContact = evt => {
+    // console.log(evt);
+    const { id } = evt.target.parentNode.parentNode;
+    // console.log(id);
+    // const {contacts} = this.state;
+    setContacts(prev => prev.filter(contact => contact.id !== id));
+    setContactsCopy(prev => prev.filter(contact => contact.id !== id));
+  };
+
+  // console.log(contacts, filter);
+  return (
+    <div className={styles.container}>
+      <div className={styles.contactBook}>
+        <Section title="Phonebook">
+          <ContactForm onSubmit={addContact} />
+        </Section>
+        <Section title="Contacts">
+          <div className={styles.contacts}>
+            <Filter filter={filter} onChange={filterContacts} />
+            <ContactList contacts={contacts} onClick={deleteContact} />
+          </div>
+        </Section>
+      </div>
+    </div>
+  );
+};
+
+export default App;
 
 // data
 
