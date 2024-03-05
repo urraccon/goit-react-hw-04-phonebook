@@ -28,7 +28,9 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+    if (contacts.length !== 0) {
+      localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+    }
   }, [contacts]);
 
   const addContact = form => {
