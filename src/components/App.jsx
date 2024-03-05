@@ -4,7 +4,7 @@ import ContactForm from './contact_form/ContactForm';
 import { Filter } from './filter/Filter';
 import { ContactList } from './contact_list/ContactList';
 import { Section } from './common/section/Section';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const CONTACTS_KEY = 'contacts';
 
@@ -20,7 +20,7 @@ const App = () => {
     } else {
       setIsFirstMouting(true);
     }
-  }, [contacts]);
+  }, [contacts, isFirstMouting]);
 
   useEffect(() => {
     async function getContacts() {
