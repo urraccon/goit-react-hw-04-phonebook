@@ -4,7 +4,7 @@ import ContactForm from './contact_form/ContactForm';
 import { Filter } from './filter/Filter';
 import { ContactList } from './contact_list/ContactList';
 import { Section } from './common/section/Section';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const CONTACTS_KEY = 'contacts';
 
@@ -12,6 +12,15 @@ const App = () => {
   const [contacts, setContacts] = useState([]);
   const [contactsCopy, setContactsCopy] = useState([]);
   const [filter, setFilter] = useState('');
+  const [isFirstMouting, setIsFirstMouting] = useState(false);
+
+  useEffect(() => {
+    if (isFirstMouting) {
+      localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+    } else {
+      setIsFirstMouting(true);
+    }
+  }, [contacts]);
 
   useEffect(() => {
     async function getContacts() {
@@ -26,12 +35,6 @@ const App = () => {
       console.log(`error: ${err}`);
     });
   }, []);
-
-  useEffect(() => {
-    if (contacts.length !== 0) {
-      localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
-    }
-  }, [contacts]);
 
   const addContact = form => {
     // debugger;
